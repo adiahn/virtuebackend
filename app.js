@@ -11,6 +11,8 @@ const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 const userRouter = require('./routes/userRoutes');
 const postRouter = require('./routes/postRoute');
+const messageRouter = require('./routes/messageRoutes');
+
 
 const app = express();
 
@@ -30,7 +32,20 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, please try again in an hour!',
 });
 app.use('/api', limiter);
-app.use(cors());
+app.use(cors({
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if(!origin) return callback(null, true);
+    
+    // Allow all localhost origins
+    if(origin.startsWith('http://localhost:')) {
+      return callback(null, true);
+    }
+    
+    callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true // Allow credentials (cookies, authorization headers, etc.)
+}));
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' }));
 
@@ -67,6 +82,7 @@ app.use((req, res, next) => {
 // 3) ROUTES
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/posts', postRouter);
+app.use('/api/v1/messages', messageRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
