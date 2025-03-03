@@ -46,6 +46,16 @@ exports.getPost = catchAsync(async (req, res, next) => {
     })
 })
 
+exports.getComment = catchAsync(async (req, res, next) => {
+    const posts = await Post.find().sort({ createdAt: -1 });
+    res.status(200).json({
+        status: 'success',
+        results: posts.length,
+        data: posts
+    })
+})
+
+
 exports.createComment = catchAsync(async (req, res, next) => {
     const { body } = req.body;
     const post = await Post.findById(req.params.id);

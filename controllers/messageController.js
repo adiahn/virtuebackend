@@ -22,7 +22,7 @@ exports.createMessage = catchAsync(async (req, res, next) => {
 });
 
 exports.getMessages = catchAsync(async (req, res, next) => {
-  const messages = await Message.find();
+  const messages = await Message.find().sort({ createdAt: -1 });
   
   res.status(200).json({
     status: 'success',
