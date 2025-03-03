@@ -24,11 +24,11 @@ exports.createPost = catchAsync(async (req, res, next) => {
 })   
 
 exports.getPosts = catchAsync(async (req, res, next) => {
-    const posts = await Post.find();
+    const posts = await Post.find().sort({ createdAt: -1 });
     res.status(200).json({
         status: 'success',
         results: posts.length,
-        data:posts
+        data: posts
     })
 })
 
