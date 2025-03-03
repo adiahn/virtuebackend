@@ -46,12 +46,16 @@ exports.getPost = catchAsync(async (req, res, next) => {
     })
 })
 
-exports.getComment = catchAsync(async (req, res, next) => {
-    const posts = await Post.find().sort({ createdAt: -1 });
+exports.getComments = catchAsync(async (req, res, next) => {
+    const post = await Post.findById(req.params.id);
+    if(!post) {
+        return next(new AppError('No post found with that ID', 404));
+    }
+    const comments = await Comment.find({ post: req.params.id });
     res.status(200).json({
         status: 'success',
-        results: posts.length,
-        data: posts
+        results: comments.length,
+        data: comments
     })
 })
 
