@@ -33,21 +33,14 @@ const limiter = rateLimit({
 });
 
 app.use('/api', limiter);
+
 const allowedOrigins = [
   'http://localhost:3000', // Allow local frontend
   'https://yourfrontenddomain.com', // 🔹 Replace with your actual frontend domain
   'https://your-render-app.onrender.com' // 🔹 Allow Render deployment
 ];
 
-app.use(cors({
-  origin: function(origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    callback(new Error('Not allowed by CORS'));
-  },
-  credentials: true
-}));
+app.use(cors());
 
 
 
