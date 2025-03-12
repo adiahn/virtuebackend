@@ -31,21 +31,26 @@ const limiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   message: 'Too many requests from this IP, please try again in an hour!',
 });
+
 app.use('/api', limiter);
+const allowedOrigins = [
+  'http://localhost:3000', // Allow local frontend
+  'https://yourfrontenddomain.com', // 🔹 Replace with your actual frontend domain
+  'https://your-render-app.onrender.com' // 🔹 Allow Render deployment
+];
+
 app.use(cors({
   origin: function(origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if(!origin) return callback(null, true);
-    
-    // Allow all localhost origins
-    if(origin.startsWith('http://localhost:')) {
+    if (!origin || allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
-    
     callback(new Error('Not allowed by CORS'));
   },
-  credentials: true // Allow credentials (cookies, authorization headers, etc.)
+  credentials: true
 }));
+
+
+
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' }));
 
